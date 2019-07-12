@@ -1,6 +1,6 @@
 FROM docker:latest
 
-RUN apk add --no-cache ca-certificates openssh-client wget curl make git bash go go-tools alpine-sdk
+RUN apk update && apk add --no-cache ca-certificates openssh-client wget curl make git bash go alpine-sdk
 
 RUN mkdir -p ~/.ssh && chmod 700 ~/.ssh \
     && mkdir -p /go/bin && mkdir -p /go/src
