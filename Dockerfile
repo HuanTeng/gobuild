@@ -1,12 +1,16 @@
-FROM docker:latest
+FROM docker:18-git
 
-RUN apk update && apk add --no-cache ca-certificates openssh-client wget curl make git bash go alpine-sdk
-
-RUN mkdir -p ~/.ssh && chmod 700 ~/.ssh \
-    && mkdir -p /go/bin && mkdir -p /go/src
+ENV GO111MODULE off
 ENV GOPATH /go
-ENV PATH "/go/bin:${PATH}"
+ENV GOBIN "${GOPATH}/bin"
+ENV PATH "${GOBIN}:${PATH}"
 
-RUN curl https://glide.sh/get | sh
-RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-RUN go get github.com/huanteng/pgdiff && rm -rf /go/src/*
+RUN apk update && apk add --no-cache go=1.12.12-r0 curl && apk upgrade && \
+    mkdir -p ${GOBIN} && \
+    mkdir -p ~/.ssh && chmod 0700 ~/.ssh && \
+    curl -s https://glide.sh/get | sh && \
+    curl -s https://raw.githubusercontent.com/golang/dep/master/install.sh | sh && \
+    go get github.com/huanteng/pgdiff && \
+    go clean -cache -testcache -modcache && \
+    rm -rf ${GOPATH}/src/* && \
+    rm -rf /tmp/*
